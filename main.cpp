@@ -9,7 +9,6 @@ int verificar_cadastro(string user)
 {
     ifstream contas("contas.csv");
     string name, pass, linha;
-    int rr= 0;
     
     while (getline(contas, linha, ','))
     {
@@ -29,64 +28,22 @@ int verificar_cadastro(string user)
 
 int verificar_login_user(string user)
 {
-    int rows = 0;
     ifstream contas("contas.csv");
-    string line_user, all_users, act_user;
-    all_users = "";
-    act_user = "";
-    while (getline(contas, line_user))
+    string name, pass, linha;
+    int row = 0;
+    
+    while (getline(contas, linha, ','))
     {
-        rows++;
-        bool user_verification = true;
-        for (int i = 0; i < line_user.length(); i++)
-        {
-            if (line_user[i] != ',')
-            {
-                all_users += line_user[i];
-            }
-            else
-            {
-                all_users += " ";
-                break;
-            }
-        }
-        for (int i = 0; i < all_users.length(); i++)
-        {
-            if (all_users[i] != ' ')
-            {
-                act_user += all_users[i];
-            }
-            else
-            {
-                if (act_user == user)
-                {
-                    // cout << "\n\nusuario encontrado\n\n";
-                    user_verification = false;
-                    return rows;
-                }
-                act_user = "";
-            }
-        }
-    }
-    cout << "usuario nao encontrado" << endl;
+        getline(contas,name,',');
+        getline(contas,pass, '\n');
 
-    while (true)
-    {
-        string a;
-        cout << "cadastrar ou tentar login novamente? (cadastrar/login) ";
-        cin >> a;
-
-        if (a == "cadastrar")
+        if (user == name) 
         {
-            cadastrar();
-            return 1;
+            return row;
         }
-        else if (a == "login")
-        {
-            login();
-            return 1;
-        }
+        row ++;
     }
+    return -1;
 }
 
 //
@@ -95,29 +52,25 @@ int verificar_login_user(string user)
 void verificar_senha(string password, int row)
 {
     ifstream contas("contas.csv");
-
-    bool found_password = false;
-
-    string name;
-    string pass;
-    string line = "";
-    std::vector<std::string> record;
-    int cont = 0;
-    while (getline(contas, line, '\n') && !found_password)
+    string name, pass, linha;
+    int rr = 0;
+    while (getline(contas, linha, ','))
     {
         getline(contas, name, ',');
-        getline(contas, pass, '\n');
-        record.push_back(name);
-        record.push_back(pass);
-        cont++;
-    }
+        getline(contas,pass,'\n');
 
-    cout << cont;
+        if (rr == row)
+        {
+            if (password == pass)
+            {
+                cout << "acesso liberado";
+            }
 
-    for (int i = 0; i < 3; i++)
-    {
-        cout << record[i];
+        }
+        rr++;
     }
+    
+
 }
 
 //
@@ -189,6 +142,11 @@ void login()
     cout << "Digite a senha: ";
     cin >> password;
     auto row = verificar_login_user(user);
+    if (row == -1)
+    {
+        cout << "Usuario nao cadastrado";
+        return;
+    }
     verificar_senha(password, row);
 }
 
