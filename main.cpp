@@ -2,6 +2,7 @@
 using namespace std;
 
 void cadastrar(), login(), verificar_login_user(), verificar_senha();
+int main();
 
 //
 //
@@ -9,13 +10,13 @@ int verificar_cadastro(string user)
 {
     ifstream contas("contas.csv");
     string name, pass, linha;
-    
+
     while (getline(contas, linha, ','))
     {
-        getline(contas,name,',');
-        getline(contas,pass, '\n');
+        getline(contas, name, ',');
+        getline(contas, pass, '\n');
 
-        if (user == name) 
+        if (user == name)
         {
             return 1;
         }
@@ -31,17 +32,17 @@ int verificar_login_user(string user)
     ifstream contas("contas.csv");
     string name, pass, linha;
     int row = 0;
-    
+
     while (getline(contas, linha, ','))
     {
-        getline(contas,name,',');
-        getline(contas,pass, '\n');
+        getline(contas, name, ',');
+        getline(contas, pass, '\n');
 
-        if (user == name) 
+        if (user == name)
         {
             return row;
         }
-        row ++;
+        row++;
     }
     return -1;
 }
@@ -49,7 +50,7 @@ int verificar_login_user(string user)
 //
 //
 
-void verificar_senha(string password, int row)
+void verificar_senha(string password, int row, string user)
 {
     ifstream contas("contas.csv");
     string name, pass, linha;
@@ -57,20 +58,19 @@ void verificar_senha(string password, int row)
     while (getline(contas, linha, ','))
     {
         getline(contas, name, ',');
-        getline(contas,pass,'\n');
+        getline(contas, pass, '\n');
 
-        if (rr == row)
+        if (rr == row && password == pass && rr != 0)
         {
-            if (password == pass)
-            {
-                cout << "acesso liberado";
-            }
-
+            cout << "acesso liberado" << endl;
+            cout << "Bem vindo(a) " << user;
+            return;
         }
         rr++;
     }
-    
 
+    cout << "Acesso negado" << endl;
+    main();
 }
 
 //
@@ -94,12 +94,13 @@ void cadastrar()
             if (verificar_cadastro(user) != 1)
             {
                 contas << id << ',' << user << ',' << password << endl;
-            } else 
+            }
+            else
             {
-                cout << "Usuario ja registrado";
+                cout << "Usuario ja registrado" << endl;
             }
             contas.close();
-            login();
+            main();
             return;
         }
         else
@@ -112,18 +113,21 @@ void cadastrar()
             cin >> password;
             int id = reinterpret_cast<int>(&user);
 
-            contas <<"id" << "," <<"user"
+            contas << "id"
+                   << ","
+                   << "user"
                    << ','
                    << "password" << endl;
             if (verificar_cadastro(user) != 1)
             {
                 contas << id << ',' << user << ',' << password << endl;
-            } else 
+            }
+            else
             {
-                cout<< "usuario ja registrado";
+                cout << "usuario ja registrado" << endl;
             }
             contas.close();
-            login();
+            main();
             return;
         }
     }
@@ -147,7 +151,7 @@ void login()
         cout << "Usuario nao cadastrado";
         return;
     }
-    verificar_senha(password, row);
+    verificar_senha(password, row, user);
 }
 
 //
@@ -156,15 +160,21 @@ void login()
 int main()
 {
     string conta;
-    cout << "fazer login ou cadastro? (login/cadastro) ";
-    cin >> conta;
-    if (conta == "login")
+    while (true)
     {
-        login();
+        cout << "fazer login ou cadastro? (login/cadastro) ";
+        cin >> conta;
+        if (conta == "login")
+        {
+            login();
+            break;
+        }
+        else if (conta == "cadastro")
+        {
+            cadastrar();
+            break;
+        }
     }
-    else
-    {
-        cadastrar();
-    }
+
     return 0;
 }
